@@ -3,6 +3,7 @@ package com.example.demo.itemsearch;
 import java.time.LocalDateTime;
 
 
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -12,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import com.example.demo.Item.Item;
 import com.example.demo.Item.MainItemDto;
 import com.example.demo.constant.ItemSellStatus;
-import com.example.demo.entity.Item.QItem;
-import com.example.demo.entity.Item.QMainItemDto;
 import com.example.demo.itemimg.QItemImg;
 import com.example.demo.itemsearch.ItemSearchDto;
 import com.querydsl.core.QueryResults;
@@ -35,11 +34,11 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
 	@Override
 	public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
 		List<Item> results = queryFactory
-				.selectFrom(QItem.item)
+				.selectFrom(com.example.demo.Item.QItem.item)
 				.where(regDtsAfter(itemSearchDto.getSearchDateType()),
 						searchSeelStatusEq(itemSearchDto.getSearchSellStatus()),
 						searchByLike(itemSearchDto.getSearchBy(), itemSearchDto.getSearchQuery()))
-				.orderBy(QItem.item.id.desc())
+				.orderBy(com.example.demo.Item.QItem.item.id.desc())
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
@@ -50,12 +49,12 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
 	
 	@Override
 	public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
-		QItem item = QItem.item;
+		com.example.demo.Item.QItem item = com.example.demo.Item.QItem.item;
 		QItemImg itemImg = QItemImg.itemImg;
 		
 		List<MainItemDto> results = queryFactory
 				.select(
-						new QMainItemDto(item.id, item.itemName, item.itemDetail, itemImg.imgUrl, item.price))
+						new com.example.demo.Item.QMainItemDto(item.id, item.itemName, item.itemDetail, itemImg.imgUrl, item.price))
 				.from(itemImg)
 				.join(itemImg.item, item)
 				.where(itemImg.repimgYn.eq("Y"))
@@ -70,12 +69,12 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
 	}
 
 	private BooleanExpression itemNameLike(String searchQuery) {
-		return StringUtils.isEmpty(searchQuery) ? null : QItem.item.itemName.like("%" + searchQuery + "%");
+		return StringUtils.isEmpty(searchQuery) ? null : com.example.demo.Item.QItem.item.itemName.like("%" + searchQuery + "%");
 		
 	}
 	
 	private BooleanExpression searchSeelStatusEq(ItemSellStatus searchSellStatus) {
-		return searchSellStatus == null ? null : QItem.item.itemSellStatus.eq(searchSellStatus);
+		return searchSellStatus == null ? null : com.example.demo.Item.QItem.item.itemSellStatus.eq(searchSellStatus);
 	}
 	
 	private BooleanExpression regDtsAfter(String searchDateType) {
@@ -93,14 +92,14 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
 			dateTime = dateTime.minusMonths(6);
 		}
 		
-		return QItem.item.regTime.after(dateTime);
+		return com.example.demo.Item.QItem.item.regTime.after(dateTime);
 	}
 	
 	private BooleanExpression searchByLike(String searchBy, String searchQuery) {
 		if("itemName".equals(searchQuery)) {
-			return QItem.item.itemName.like("%" + searchQuery + "%");
+			return com.example.demo.Item.QItem.item.itemName.like("%" + searchQuery + "%");
 		} else if("createdBy".equals(searchQuery)) {
-			return QItem.item.createdBy.like("%" + searchQuery + "%");
+			return com.example.demo.Item.QItem.item.createdBy.like("%" + searchQuery + "%");
 		}
 		return null;
 	}

@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
 import com.example.demo.Item.Item;
 import com.example.demo.Item.ItemRepository;
 import com.example.demo.constant.ItemSellStatus;
-import com.example.demo.entity.Item.QItem;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -149,7 +149,7 @@ public class ItemRepositoryTest {
 	public void queryDslTest() {
 		this.createItemList2();
 		JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-		QItem qItem = QItem.item;
+		com.example.demo.Item.QItem qItem = com.example.demo.Item.QItem.item;
 		JPAQuery<Item> query = queryFactory.selectFrom(qItem)
 								.where(qItem.itemDetail.like("%" + "테스트 상품 설명" + "%"))
 								.orderBy(qItem.price.desc());
@@ -166,7 +166,7 @@ public class ItemRepositoryTest {
 		this.createItemList2();
 		
 		com.querydsl.core.BooleanBuilder booleanBuilder = new com.querydsl.core.BooleanBuilder();
-		QItem item = QItem.item;
+		com.example.demo.Item.QItem item = com.example.demo.Item.QItem.item;
 		String itemDetail = "테스트 상품 설명";
 		int price = 5000;
 		String itemSellStat = "SELL";
